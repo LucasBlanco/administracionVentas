@@ -23,7 +23,8 @@ class PromiseService
     {
         $this->client = new Client([
             'base_uri' => $base_uri,
-            'timeout'  => 2.0,
+            'timeout'  => 10.0,
+            'json' => true
         ]);
     }
 
@@ -44,7 +45,7 @@ class PromiseService
 
     public function delete($url, $id)
     {
-        return $this->client->deleteAsync($url + '/' + $id);
+        return $this->client->deleteAsync($url . '/' . $id);
     }
 
     public function all($promises){

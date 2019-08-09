@@ -12,8 +12,8 @@ class ExampleTest extends TestCase
      */
     public function testExample()
     {
-        $this->get('/');
-
+        $hola = $this->get('/');
+        $this->seeJson();
         $this->assertEquals(
             $this->app->version(), $this->response->getContent()
         );

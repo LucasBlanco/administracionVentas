@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\services\AdministracionService;
-use App\services\VentaService;
+use App\services\VentaServiceGateway;
 use App\services\UsuarioService;
 use App\services\PromiseService;
 use App\User;
@@ -21,7 +21,7 @@ class AdministracionController extends Controller
     public function __construct()
     {
         $this->service = new AdministracionService();
-        $this->ventasSrv = new VentaService();
+        $this->ventasSrv = new VentaServiceGateway();
         $this->userSrv = new UsuarioService();
         $this->promiseSrv = new PromiseService();
     }
@@ -52,47 +52,39 @@ class AdministracionController extends Controller
 
     public function rechazar(Request $request)
     {
-        $ventaPromise = $this->ventasSrv->getById($request['idVenta']);
-        $usuarioPromise = $this->userSrv->getById($request['userId']);
-        $respuesta = $this->promiseSrv->all($ventaPromise, $usuarioPromise)->wait()->getBody();
-        $venta = $respuesta[0];
-        $user = $respuesta[1];
-
-        DB::transaction(function() use ($request, $venta, $user){
-            $recuperable = $request['recuperable'];
-            $observacion = $request['observacion'];
-            $this->service->rechazar($venta, $user, $recuperable, $observacion);
-        });
+        $venta = $request['idVenta'];
+        $user = $request['userId'];
+        $recuperable = $request['recuperable'];
+        $observacion = $request['observacion'];
+        return $this->ventasSrv->rechazar($venta, $user, $recuperable, $observacion)->wait()->getBody();
     }
 
     public function completarVenta(Request $request)
-    {   $idVenta = $request['idVenta'];
+    {
+        $idVenta = $request['idVenta'];
         $cuit = $request['cuit'];
         $empresa = $request['empresa'];
         $tresPorciento = $request['tresPorciento'];
-        $this->service->completarVenta($idVenta, $cuit, $empresa, $tresPorciento);
+        return $this->ventasSrv->completarVenta($idVenta, $cuit, $empresa, $tresPorciento)->wait()->getBody();
     }
 
     public function presentarVentas(Request $request)
     {
-        Db::transaction(function() use ($request){
-            $ventas = Venta::whereIn('id', $request['ids'])->get();
-            $user = User::find($request['userId']);
-            $fechaPresentacion = $request['fechaPresentacion'];
-            $this->service->presentarVentas($ventas, $user, $fechaPresentacion);
-        });
+        $ventas = $request['ids'];
+        $user = $request['userId'];
+        $fechaPresentacion = $request['fechaPresentacion'];
+        return $this->ventasSrv->presentarVentas($ventas, $user, $fechaPresentacion)->wait()->getBody();
     }
 
     public function analizarPresentacion(Request $request)
     {
-        return Db::transaction(function() use ($request){
-            $venta = Venta::find($request['idVenta']);
-            $user = User::find($request['userId']);
-            $estado = $request['estado'];
-            $recuperable = $request['recuperable'];
-            $observacion = $request['observacion'];
-            return $this->service->analizarPresentacion($venta, $estado, $recuperable, $observacion, $user);
-        });
+
+        $venta = $request['idVenta'];
+        $user = $request['userId'];
+        $estado = $request['estado'];
+        $recuperable = $request['recuperable'];
+        $observacion = $request['observacion'];
+        return $this->ventasSrv->analizarPresentacion($venta, $estado, $recuperable, $observacion, $user)->wait()->getBody();
     }
 
 
