@@ -26,30 +26,6 @@ class AdministracionController extends Controller
         $this->promiseSrv = new PromiseService();
     }
 
-    public function ventasIncompletas()
-    {
-        $promise = $this->ventasSrv->ventasIncompletas();
-        return $promise->wait()->getBody();
-    }
-
-    public function ventasPresentables()
-    {
-        $promise = $this->ventasSrv->ventasPresentables();
-        return $promise->wait()->getBody();
-    }
-
-    public function ventasPresentadas()
-    {
-        $promise = $this->ventasSrv->ventasPresentadas();
-        return $promise->wait()->getBody();
-    }
-
-    public function ventasRechazables()
-    {
-        $promise = $this->ventasSrv->ventasRechazables();
-        return $promise->wait()->getBody();
-    }
-
     public function rechazar(Request $request)
     {
         $venta = $request['idVenta'];

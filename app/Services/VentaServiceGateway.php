@@ -37,26 +37,6 @@ class VentaServiceGateway
         $this->preVentaServer = new PromiseService('https://jsonplaceholder.typicode.com');
     }
 
-    public function ventasIncompletas()
-    {
-        return $this->preVentaServer->get('ventasIncompletas');
-    }
-
-    public function ventasPresentables()
-    {
-        return $this->preVentaServer->get('ventasPresentables');
-    }
-
-    public function ventasPresentadas()
-    {
-        return $this->preVentaServer->get('ventasPresentadas');
-    }
-
-    public function ventasRechazables()
-    {
-        return $this->preVentaServer->get('ventasRechazables');
-    }
-
     public function presentarVentas($ventas, $user, $fechaPresentacion)
     {
         $presentaciones = (object)[

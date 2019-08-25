@@ -12,7 +12,7 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return phpinfo();
 });
 
 $router->get('/ventasIncompletas', ['uses' => 'AdministracionController@ventasIncompletas']);
